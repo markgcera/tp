@@ -67,7 +67,7 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name.
+     * Returns true if both persons of the same name have at least one other identity field that is the same.
      * This defines a weaker notion of equality between two persons.
      */
     public boolean isSamePerson(Person otherPerson) {
@@ -76,7 +76,8 @@ public class Person {
         }
 
         return otherPerson != null
-                && otherPerson.getName().equals(getName());
+                && otherPerson.getName().equals(getName())
+                && (otherPerson.getPhone().equals(getPhone()) || otherPerson.getEmail().equals(getEmail()));
     }
 
     /**
@@ -89,17 +90,16 @@ public class Person {
             return true;
         }
 
-        // instanceof handles nulls
         if (!(other instanceof Person)) {
             return false;
         }
 
         Person otherPerson = (Person) other;
-        return name.equals(otherPerson.name)
-                && phone.equals(otherPerson.phone)
-                && email.equals(otherPerson.email)
-                && address.equals(otherPerson.address)
-                && tags.equals(otherPerson.tags);
+        return otherPerson.getName().equals(getName())
+                && otherPerson.getPhone().equals(getPhone())
+                && otherPerson.getEmail().equals(getEmail())
+                && otherPerson.getAddress().equals(getAddress())
+                && otherPerson.getTags().equals(getTags());
     }
 
     @Override
