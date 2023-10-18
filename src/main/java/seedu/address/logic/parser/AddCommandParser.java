@@ -45,12 +45,14 @@ public class AddCommandParser implements Parser<AddCommand> {
                 ArgumentTokenizer.tokenize(args, PREFIX_ROOM, PREFIX_NAME, PREFIX_PHONE,
                         PREFIX_EMAIL, PREFIX_BOOKING_PERIOD, PREFIX_TAG);
 
-        if (!arePrefixesPresent(argMultimap, PREFIX_ROOM, PREFIX_NAME, PREFIX_BOOKING_PERIOD, PREFIX_PHONE, PREFIX_EMAIL)
+        if (!arePrefixesPresent(argMultimap, PREFIX_ROOM, PREFIX_NAME, PREFIX_BOOKING_PERIOD, PREFIX_PHONE,
+                PREFIX_EMAIL)
                 || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
 
-        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_ROOM, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_BOOKING_PERIOD);
+        argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_ROOM, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
+                PREFIX_BOOKING_PERIOD);
         Room room = ParserUtil.parseRoom(argMultimap.getValue(PREFIX_ROOM).get());
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
