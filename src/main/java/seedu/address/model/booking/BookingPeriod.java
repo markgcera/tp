@@ -13,9 +13,10 @@ import java.time.format.DateTimeParseException;
  */
 public class BookingPeriod {
 
-    public static final String MESSAGE_CONSTRAINTS = "Booking periods must be in the format 'YYYY-MM-DD:DD'";
+    public static final String MESSAGE_CONSTRAINTS = "Booking periods must be in the format 'YYYY-MM-DD to "
+            + "YYYY-MM-DD', and the end date must be after or equal to the start date.";
 
-    public static final String VALIDATION_REGEX = "^\\d{4}-\\d{2}-\\d{2}:\\d+$";
+    public static final String VALIDATION_REGEX = "^\\d{4}-\\d{2}-\\d{2} to \\d{4}-\\d{2}-\\d{2}$";
 
     public final String value; // String representation of the booking period
 
@@ -37,12 +38,12 @@ public class BookingPeriod {
 
     /**
      * Returns true if a given string is a valid booking period.
-     * A valid booking period must be in the format "YYYY-MM-DD:DD", where "DD" is the end day.
-     * The end day must be greater than or equal to the start day.
+     * A valid booking period must be in the format "YYYY-MM-DD to YYYY-MM-DD".
+     * The end date must be after or equal to the start date.
      *
      * @param test The string to test for validity.
-     * @return True if the string matches the expected format and the end day is greater than or equal to the start
-     *              day; false otherwise.
+     * @return True if the string matches the expected format and the end date is after or equal to the start date;
+     *              false otherwise.
      */
     public static boolean isValidBookingPeriod(String test) {
         if (!test.matches(VALIDATION_REGEX)) {
@@ -50,20 +51,11 @@ public class BookingPeriod {
         }
 
         try {
-            // Split the string into date and end day parts
-            String[] parts = test.split(":");
-            String datePart = parts[0];
-            String endDayPart = parts[1];
-
-            // Parse the date and end day
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate startDate = LocalDate.parse(datePart, dateFormatter);
-
-            int endDay = Integer.parseInt(endDayPart);
-
-            // Check that end day is greater or equal to start day
-            return endDay >= startDate.getDayOfMonth();
-        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException | NumberFormatException e) {
+            String[] dateParts = test.split(" to ");
+            LocalDate startDate = LocalDate.parse(dateParts[0]);
+            LocalDate endDate = LocalDate.parse(dateParts[1]);
+            return !endDate.isBefore(startDate);
+        } catch (DateTimeParseException e) {
             return false;
         }
     }
@@ -76,19 +68,14 @@ public class BookingPeriod {
      */
     private void setPeriod(String period) {
         try {
-            // Split the string into date and end day parts
-            String[] parts = period.split(":");
-            String datePart = parts[0];
-            String endDayPart = parts[1];
-
-            // Parse the date and end day
+            // Split the string into start and end date parts
+            String[] dateParts = period.split(" to ");
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            this.checkInDate = LocalDate.parse(datePart, dateFormatter);
 
-            int endDay = Integer.parseInt(endDayPart);
-            this.checkOutDate = LocalDate.of(checkInDate.getYear(), checkInDate.getMonth(), endDay);
+            this.checkInDate = LocalDate.parse(dateParts[0], dateFormatter);
+            this.checkOutDate = LocalDate.parse(dateParts[1], dateFormatter);
 
-        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException | NumberFormatException e) {
+        } catch (DateTimeParseException e) {
             throw new IllegalArgumentException(MESSAGE_CONSTRAINTS, e);
         }
     }
