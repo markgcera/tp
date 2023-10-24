@@ -1,6 +1,5 @@
 package seedu.address.model.booking;
 
-import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -83,7 +82,6 @@ public class Booking {
      */
     @Override
     public boolean equals(Object other) {
-        requireNonNull(other);
         if (other == this) {
             return true;
         }
